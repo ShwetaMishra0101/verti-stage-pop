@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import CircularProgress from './Progress/CircularProgress'
+import Pagination from './Component/Pages/Pagination'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -50,14 +51,15 @@ function App() {
           Click on the Vite and React logos to learn more
         </p>
       </div> */}
-      <CircularProgress
+      {/* <CircularProgress
         percentage={30}
         size={100}
         strokeWidth={10}
         color="blue"
         showPercentage={true}
         moduleIndex={1}
-      />
+      /> */}
+      <Pagination />
     </div>
   )
 }
