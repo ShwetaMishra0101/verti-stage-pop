@@ -51,14 +51,14 @@ function App() {
           Click on the Vite and React logos to learn more
         </p>
       </div> */}
-      {/* <CircularProgress
+      <CircularProgress
         percentage={30}
         size={100}
         strokeWidth={10}
         color="blue"
         showPercentage={true}
         moduleIndex={1}
-      /> */}
+      />
       <Pagination />
     </div>
   )
