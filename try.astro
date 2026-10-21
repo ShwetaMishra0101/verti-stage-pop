@@ -1,0 +1,483 @@
+---
+import Image from "../../Image/Image.astro";
+import type { MediaShowcaseLogo, MediaShowcaseProps } from "./types";
+// import { data } from "./data";
+// console.log("data", data);
+const { componentData } = Astro.props as MediaShowcaseProps;
+const information = data;
+
+const heading = information?.heading || "";
+const description = information?.description || "";
+const rawLogos = information?.logos;
+const logos: MediaShowcaseLogo[] = Array.isArray(rawLogos)
+  ? rawLogos.filter((logo) => !!logo?.image)
+  : [];
+
+const sectionId = information?.tabInfo?.id || "media-showcase";
+const bgColor = information?.bgColor || "#FFFFFF";
+const headingColor = information?.headingColor || "#000000";
+const descriptionColor = information?.descriptionColor || "#4B5563";
+
+const hasContent = !!(heading || description || logos.length);
+---
+
+{
+  hasContent && (
+    <section
+      id={sectionId}
+      class="ms1 w-full scroll-mt-[100px]"
+      style={`background:${bgColor};`}
+    >
+      <div class="mx-auto max-w-[1440px] px-4 md:px-20 py-12 md:py-16">
+        {heading && (
+          <h2 class="ms1-heading" style={`color:${headingColor}`}>
+            {heading}
+          </h2>
+        )}
+        {description && (
+          <p class="ms1-desc" style={`color:${descriptionColor}`}>
+            {description}
+          </p>
+        )}
+
+        {logos.length > 0 && (
+          <div class="ms1-carousel">
+            <button
+              type="button"
+              class="ms1-nav ms1-prev"
+              data-ms1-prev
+              aria-label="Show previous logos"
+              hidden
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+
+            <div class="ms1-track" data-ms1-track>
+              {logos.map((logo) =>
+                logo.link ? (
+                  <a
+                    class="ms1-card"
+                    href={logo.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src={logo.image}
+                      alt={logo.alt || ""}
+                      className="ms1-logo"
+                      lazy={true}
+                      sizes={{ xs: 320, md: 320 }}
+                    />
+                  </a>
+                ) : (
+                  <div class="ms1-card">
+                    <Image
+                      src={logo.image}
+                      alt={logo.alt || ""}
+                      className="ms1-logo"
+                      lazy={true}
+                      sizes={{ xs: 320, md: 320 }}
+                    />
+                  </div>
+                ),
+              )}
+            </div>
+
+            <button
+              type="button"
+              class="ms1-nav ms1-next"
+              data-ms1-next
+              aria-label="Show more logos"
+              hidden
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M9 6l6 6-6 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .ms1-heading {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    text-align: center;
+    font-size: 24px;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .ms1-desc {
+    font-family: "Inter", sans-serif;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 640px;
+    margin: 12px auto 0;
+  }
+
+  .ms1-carousel {
+    position: relative;
+    margin-top: 32px;
+  }
+
+  .ms1-track {
+    display: flex;
+    align-items: center;
+    justify-content: safe center;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 8px 0;
+  }
+  .ms1-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ms1-card {
+    flex: 0 0 auto;
+    width: calc(100vw - 32px);
+    max-width: 320px;
+    height: 140px;
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--ms1-card-bg, #ffffff);
+    border: 1px solid var(--ms1-card-border, #f4f4f5);
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+      box-shadow 0.35s;
+  }
+  a.ms1-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .ms1-card :global(.ms1-logo) {
+    max-width: 100%;
+    max-height: 80px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* ---------- arrows: desktop only, phones swipe ---------- */
+  .ms1-nav {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .ms1-heading {
+      font-size: 36px;
+    }
+    .ms1-desc {
+      font-size: 16px;
+      margin-top: 16px;
+    }
+    .ms1-carousel {
+      margin-top: 40px;
+    }
+    .ms1-card {
+      width: 320px;
+      height: 160px;
+      scroll-snap-align: start;
+    }
+
+    .ms1-nav:not([hidden]) {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #18181b;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.12);
+      transition:
+        opacity 0.25s,
+        box-shadow 0.25s,
+        border-color 0.25s;
+    }
+    .ms1-nav svg {
+      width: 22px;
+      height: 22px;
+    }
+    .ms1-nav:hover:not(:disabled) {
+      border-color: #d4d4d8;
+      box-shadow: 0 10px 22px 0 rgba(0, 0, 0, 0.16);
+    }
+    .ms1-nav:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .ms1-prev:not([hidden]) {
+      left: -8px;
+    }
+    .ms1-next:not([hidden]) {
+      right: -8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ms1-track {
+      scroll-behavior: auto;
+    }
+    .ms1-card {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    document.querySelectorAll(".ms1 .ms1-carousel").forEach(function (root) {
+      var track = root.querySelector("[data-ms1-track]");
+      var prev = root.querySelector("[data-ms1-prev]");
+      var next = root.querySelector("[data-ms1-next]");
+      if (!track || !prev || !next) return;
+
+      // one card plus the gap — falls back to a viewport-ish nudge if the row is empty
+      function step() {
+        var card = track.querySelector(".ms1-card");
+        if (!card) return track.clientWidth;
+        var gap = parseFloat(getComputedStyle(track).columnGap || "24") || 24;
+        return card.getBoundingClientRect().width + gap;
+      }
+
+      function sync() {
+        var overflows = track.scrollWidth - track.clientWidth > 1;
+        prev.hidden = !overflows;
+        next.hidden = !overflows;
+        if (!overflows) return;
+        var max = track.scrollWidth - track.clientWidth;
+        prev.disabled = track.scrollLeft <= 1;
+        next.disabled = track.scrollLeft >= max - 1;
+      }
+
+      prev.addEventListener("click", function () {
+        track.scrollBy({ left: -step(), behavior: "smooth" });
+      });
+      next.addEventListener("click", function () {
+        track.scrollBy({ left: step(), behavior: "smooth" });
+      });
+
+      track.addEventListener("scroll", sync, { passive: true });
+      window.addEventListener("resize", sync, { passive: true });
+      if ("ResizeObserver" in window) new ResizeObserver(sync).observe(track);
+      sync();
+    });
+  })();
+</script>
+
+
+---
+import Layout from "../../layouts/Layout.astro";
+import { getPageData } from "../../api/api";
+import ComponentRenderer from "../../components/CourseLandingPageV2/ComponentRenderer.astro";
+import type {
+  CourseLandingPageStructureV2Props,
+  LandingPageItemV2,
+  PageContext,
+} from "../../types/courseLandingPageV2";
+
+const addmissionUrl = import.meta.env.PUBLIC_ADMISSIONS_URL;
+
+const {
+  routeName,
+  instituteName,
+  isAccelerate = false,
+  isOurProgramPage = false,
+  isGrowthPage = false,
+  isUF = false,
+  isAdmissionPage = false,
+} = Astro.props as CourseLandingPageStructureV2Props;
+
+const pageData: any = await getPageData(routeName);
+
+if (!pageData) {
+  Astro.response.status = 404;
+  return new Response(null, {
+    status: 404,
+    statusText: "Not Found",
+  });
+}
+
+const {
+  landingPageInfo,
+  themeInformation,
+  navbarInfo,
+  isInternational,
+  isCohortActive,
+} = pageData;
+
+const isHostedCourses =
+  import.meta.env.IS_HOSTED_COURSES ||
+  import.meta.env.PUBLIC_IS_HOSTED_COURSES === "yes";
+
+const isHostedEICT = isHostedCourses && instituteName === "iit-roorkee-eict";
+
+const enablePageviewTriggerOnhostedCourses =
+  isHostedCourses && themeInformation?.enablePageviewTriggerOnhostedCourses;
+
+const hiddenInAccelerateComponents: string[] = [];
+const hiddenComponentInAdmissionPage = ["navigation-tab"];
+
+const redirectPaths = ["scm-dp", "gen-ai-business-decision-making-cohort-dp"];
+const redirectUrl = redirectPaths.includes(routeName)
+  ? `${addmissionUrl}/${instituteName}/${routeName}${isUF ? "?uf=sopbep" : ""}`
+  : `${addmissionUrl}/${instituteName}/course/${routeName}${isUF ? "?uf=sopbep" : ""}`;
+
+// Build tabInfo for navigation
+const tabInfo = landingPageInfo
+  .sort(
+    (a: { ordering: number }, b: { ordering: number }) =>
+      a?.ordering - b?.ordering,
+  )
+  .filter((data: any) => {
+    if (isAccelerate && hiddenInAccelerateComponents.includes(data?.componentKey)) return false;
+    if (isAdmissionPage && hiddenComponentInAdmissionPage.includes(data?.componentKey)) return false;
+    return data?.information?.isStepComponent;
+  })
+  .map((data: any) => ({ ...data?.information?.tabInfo }));
+
+// Build pageContext once — passed to every component
+const pageContext: PageContext = {
+  courseKey: routeName,
+  instituteName,
+  redirectUrl,
+  title: themeInformation?.meta?.title || "",
+  isAccelerate,
+  isOurProgramPage,
+  isGrowthPage,
+  isInternational: isInternational || false,
+  isAdmissionPage,
+  isCohortActive: isCohortActive || false,
+  isInShortPage: false,
+  hideBreadCrumbs: false,
+  isCETPage: false,
+  isUF,
+  isHostedCourses: !!isHostedCourses,
+  tabInfo,
+};
+
+// Attach tabInfo so the navbar can render scroll-to-section links
+const navbarInfoWithTabs = {
+  ...navbarInfo,
+  information: {
+    ...(navbarInfo?.information ?? {}),
+    tabInfo,
+  },
+};
+
+// Filter and sort components
+const items = (landingPageInfo as LandingPageItemV2[])
+  .sort((a, b) => a.ordering - b.ordering)
+  .filter((item) => {
+    if (item.status === "DRAFT") return false;
+    if (isAccelerate && hiddenInAccelerateComponents.includes(item.componentKey)) return false;
+    if (isAdmissionPage && hiddenComponentInAdmissionPage.includes(item.componentKey)) return false;
+    return true;
+  });
+
+/* TEMPORARY: the media-showcase row hasn't been authored in the CMS yet, so the
+   API returns nothing for it and the section would never render. Inject a
+   placeholder item for the routes whose press logos already live in
+   MediaShowcase/data.ts — the component reads that file when `information` is
+   empty. Delete this block (and data.ts) once the rows exist; the guard below
+   already stands down the moment the API starts sending a real row. */
+const MEDIA_SHOWCASE_FALLBACK_ROUTES = ["bs-management-technology"];
+if (
+  MEDIA_SHOWCASE_FALLBACK_ROUTES.includes(routeName) &&
+  !items.some((item) => item.componentKey === "media-showcase")
+) {
+  const faqsIndex = items.findIndex((item) => item.componentKey === "faqs");
+  items.splice(faqsIndex === -1 ? items.length : faqsIndex, 0, {
+    category: "COURSE",
+    componentKey: "media-showcase",
+    variant: "variant-1",
+    information: null,
+    ordering: 0,
+    trackId: 0,
+    status: "ACTIVE",
+    userFlow: null,
+  });
+}
+---
+
+<Layout
+  themeInformation={themeInformation}
+  dataKey={routeName}
+  navbarData={navbarInfoWithTabs}
+  redirectTo={redirectUrl}
+  isIITNavbar={true}
+  hideCTA={true}
+  hideFooterHeader={true}
+  hideFooterBody={isHostedCourses ? true : isOurProgramPage ? false : true}
+  title={themeInformation?.meta.title}
+  description={themeInformation?.meta.description}
+  ogImage={themeInformation?.meta.ogImage}
+  siteName={themeInformation?.meta.title}
+  canonicalUrl={themeInformation?.meta.canonicalUrl}
+  hideStickyFooter={isAdmissionPage}
+  footerVariant={isHostedCourses ? undefined : isOurProgramPage ? "variant-2" : undefined}
+  iitCtaVariant={themeInformation?.iitCtaVariant || "variant-2"}
+  isAccelerate={isAccelerate}
+  isOurProgramPage={isOurProgramPage}
+  gtmEvents={isAccelerate || enablePageviewTriggerOnhostedCourses ? themeInformation?.gtmEvents : {}}
+  isGrowthPage={isGrowthPage}
+  isCohortActive={isCohortActive}
+  addMasaiLogoInFooter={false}
+  metaPixelId={themeInformation?.metaPixelId || "1840602029870655"}
+  hideFooter={isHostedEICT || isAdmissionPage || themeInformation?.hideFooter}
+  hideLoginButton={isHostedEICT}
+  faviconLink={"https://admissions-production-upload.s3.ap-south-1.amazonaws.com/general/image_186.webp-1778237279181-1778237279272.webp"}
+  hideNavbar={isAdmissionPage}
+  includeAmplitudeFont={themeInformation?.includeAmplitudeFont}
+  multipleMetaPixelIds={themeInformation?.multipleMetaPixelIds}
+>
+  {
+    items.map((item) => (
+      <ComponentRenderer
+        componentData={item}
+        themeInformation={themeInformation}
+        variant={item.variant}
+        pageContext={pageContext}
+        slot="full-width"
+      />
+    ))
+  }
+</Layout>
+
