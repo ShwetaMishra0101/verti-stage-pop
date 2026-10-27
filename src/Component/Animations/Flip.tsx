@@ -212,7 +212,7 @@ const Flip = () => {
 
       <h2 className="text-[28px] mb-[40px] md:mb-[150px] px-4 lg:text-[40px] font-[600] font-poppins text-[#222] mx-auto my-auto text-center">
         Shaping Success Stories Since 2019 <br />
-        Your Goal. Our Mission
+        Your Goal. Our Mission 
       </h2>
 
       <div className="relative flex flex-col items-center w-full px-4 h-[720px] md:h-[450px] overflow-hidden">
